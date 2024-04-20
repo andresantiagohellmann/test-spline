@@ -1,47 +1,74 @@
 import { Application, SPEObject } from "@splinetool/runtime";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
+import ImgThumbsUp from "../assets/thumbsUp.svg";
+import ImgThumbsDown from "../assets/thumbsDown.svg";
 
 export const Monster4 = () => {
-  const zarkan = useRef<SPEObject | undefined>();
-  let app: Application;
-
-  useEffect(() => {
-    console.log(zarkan.current);
-  }, [zarkan.current]);
+  const app = useRef<Application>();
+  const [bgColor, setBgColor] = useState<"blue" | "green" | "red">("blue");
 
   useEffect(() => {
     const canvas = document.getElementById("canvas3d") as HTMLCanvasElement;
-    app = new Application(canvas);
-    app
-      .load("https://prod.spline.design/QpfSaXpxuKg-M8Ai/scene.splinecode")
-      .then(() => {
-        const obj = app.findObjectByName("Button1");
-
-        zarkan.current = obj;
-
-        console.log(obj);
-      });
+    app.current = new Application(canvas);
+    app.current.load(
+      "https://draft.spline.design/ygB-6GjAPS4KbCNl/scene.splinecode"
+    );
   }, []);
 
+  const handleReset = () => {
+    setTimeout(() => {
+      if (!app.current) return;
+      app.current.emitEvent("mouseDown", "Button3");
+      setBgColor("blue");
+    }, 2000);
+  };
+
   const handleClick = () => {
-    app.emitEvent("mouseDown", "Button1");
+    if (!app.current) return;
+    app.current.emitEvent("mouseDown", "Button1");
+    setBgColor("green");
+    handleReset();
   };
 
   const handleClick2 = () => {
-    app.emitEvent("mouseDown", "Button2");
+    if (!app.current) return;
+    app.current.emitEvent("mouseDown", "Button2");
+    setBgColor("red");
+    handleReset();
   };
 
   return (
-    <div className="w-full h-screen bg-black">
-      <canvas id="canvas3d"></canvas>
+    <div
+      className={`w-full h-screen flex flex-col justify-center items-center relative`}
+    >
+      <div
+        className={`bg w-full h-screen absolute top-0 left-0 transition duration-500 ${
+          bgColor === "blue" && "bg-gradient-to-r from-blue-800 to-indigo-900"
+        }  ${
+          bgColor === "green" && "bg-gradient-to-r from-emerald-400 to-cyan-400"
+        } ${bgColor === "red" && "bg-gradient-to-r from-rose-400 to-red-500"}`}
+      ></div>
 
-      <button onClick={handleClick} className="w-[200px] h-[40px] bg-green-500">
-        girar
-      </button>
+      <div className="w-[512px] h-[512px]  relative">
+        <canvas className="" id="canvas3d"></canvas>
+      </div>
 
-      <button onClick={handleClick2} className="w-[200px] h-[40px] bg-red-500">
-        girar
-      </button>
+      <div className="buttons flex gap-4 relative">
+        <button
+          onClick={handleClick}
+          className="w-[140px] h-auto p-4 flex justify-center item-center bg-green-500 rounded-full"
+        >
+          <img className="w-8" src={ImgThumbsUp} alt="" />
+        </button>
+
+        <button
+          onClick={handleClick2}
+          className="w-[140px] h-auto p-4  flex justify-center item-center bg-red-500"
+        >
+          <img className="w-8" src={ImgThumbsDown} alt="" />
+        </button>
+      </div>
     </div>
   );
 };
