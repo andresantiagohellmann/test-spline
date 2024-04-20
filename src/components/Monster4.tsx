@@ -1,4 +1,4 @@
-import { Application, SPEObject } from "@splinetool/runtime";
+import { Application } from "@splinetool/runtime";
 import { useEffect, useRef, useState } from "react";
 
 import ImgThumbsUp from "../assets/thumbsUp.svg";
